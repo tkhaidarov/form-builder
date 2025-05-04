@@ -3,13 +3,18 @@ import { getFormContentByUrl } from '@/actions/actions';
 import { FormElementInstance } from '@/components/dashboard-user/FormElement';
 import FormSubmitComponent from '@/components/forms/FormSubmitComponent';
 
-const Page = async ({ params }: { params: { formUrl: string } }) => {
-  const form = await getFormContentByUrl(params.formUrl);
+type Props = {
+  params: Promise<{ formUrl: string }>;
+};
+
+const Page = async ({ params }: Props) => {
+  const { formUrl } = await params;
+  const form = await getFormContentByUrl(formUrl);
   if (!form) {
     throw new Error('Form not found');
   }
   const formContent = JSON.parse(form.content) as FormElementInstance[];
-  return <FormSubmitComponent formUrl={params.formUrl} content={formContent} />;
+  return <FormSubmitComponent formUrl={formUrl} content={formContent} />;
 };
 
 export default Page;
