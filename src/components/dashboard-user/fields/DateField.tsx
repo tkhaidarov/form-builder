@@ -1,5 +1,5 @@
 'use client';
-import { WholeWord } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
 import {
   FormElement,
   FormElementInstance,
@@ -8,7 +8,7 @@ import {
 } from '@/components/dashboard-user/FormElement';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { TPropertiesSchema, propertiesSchema } from '@/definitions/schemas';
+import { TPropertiesSchemaDate, propertiesSchemaDate } from '@/definitions/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
@@ -24,15 +24,18 @@ import {
 import { InputField } from '@/components/ui/InputField';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-const type: TElementsType = 'TextField';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+const type: TElementsType = 'DateField';
 const additionalAttributes = {
-  label: 'Text field',
-  helperText: 'Helper text',
+  label: 'Date field',
+  helperText: 'Pick a date',
   required: false,
-  placeholder: 'write something...',
 };
 
-export const TextFieldFormElement: FormElement = {
+export const DateFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -40,8 +43,8 @@ export const TextFieldFormElement: FormElement = {
     additionalAttributes,
   }),
   designerBtnElement: {
-    icon: WholeWord,
-    label: 'Text field',
+    icon: CalendarDays,
+    label: 'Date field',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -67,7 +70,10 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
         {label}
         {required && '*'}
       </Label>
-      <Input readOnly placeholder={placeholder} />
+      <Button variant="outline" className="w-full justify-start text-left font-normal">
+        <CalendarDays />
+        <span>Pick a date</span>
+      </Button>
       {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
     </div>
   );
@@ -84,7 +90,9 @@ function FormComponent({
   isInvalid?: boolean;
   defaultValue?: string;
 }) {
-  const [value, setValue] = useState(defaultValue || '');
+  const [date, setDate] = useState<Date | undefined>(
+    defaultValue ? new Date(defaultValue) : undefined,
+  );
   const [error, setError] = useState(false);
   useEffect(() => {
     setError(isInvalid === true);
@@ -97,19 +105,36 @@ function FormComponent({
         {label}
         {required && '*'}
       </Label>
-      <Input
-        className={cn(error && 'border-destructive')}
-        placeholder={placeholder}
-        onChange={e => setValue(e.target.value)}
-        onBlur={e => {
-          if (!submitValue) return;
-          const valid = TextFieldFormElement.validate(element, e.target.value);
-          setError(!valid);
-          if (!valid) return;
-          submitValue(element.id, e.target.value);
-        }}
-        value={value}
-      />
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              'w-full justify-start text-left font-normal',
+              !date && 'text-muted-foreground',
+              error && 'text-destructive',
+            )}
+          >
+            <CalendarDays />
+            {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={date => {
+              setDate(date);
+              if (!submitValue) return;
+              const value = date?.toUTCString() || '';
+              const valid = DateFieldFormElement.validate(element, value);
+              setError(!valid);
+              submitValue(element.id, value);
+            }}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
       {helperText && (
         <p className={cn('text-muted-foreground text-[0.8rem]', error && 'text-destructive')}>
           {helperText}
@@ -126,19 +151,18 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     label: element.additionalAttributes.label,
     helperText: element.additionalAttributes.helperText,
     required: element.additionalAttributes.required,
-    placeholder: element.additionalAttributes.placeholder,
   };
 
-  const form = useForm<TPropertiesSchema>({
-    resolver: zodResolver(propertiesSchema),
+  const form = useForm<TPropertiesSchemaDate>({
+    resolver: zodResolver(propertiesSchemaDate),
     mode: 'onBlur',
     defaultValues,
   });
   useEffect(() => {
     form.reset(element.additionalAttributes);
   }, [element, form]);
-  function applyChanges(values: TPropertiesSchema) {
-    const { label, helperText, required, placeholder } = values;
+  function applyChanges(values: TPropertiesSchemaDate) {
+    const { label, helperText, required } = values;
 
     updateElement(element.id, {
       ...element,
@@ -146,7 +170,6 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
         label,
         helperText,
         required,
-        placeholder,
       },
     });
   }
@@ -164,13 +187,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           placeholder="write something..."
           type="text"
         />
-        <InputField
-          control={form.control}
-          name="placeholder"
-          label="Placeholder"
-          placeholder="write something..."
-          type="text"
-        />
+
         <InputField
           control={form.control}
           name="helperText"

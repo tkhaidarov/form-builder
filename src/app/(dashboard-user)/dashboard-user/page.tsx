@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { CardsSkeleton } from '@/components/Skeletons';
-import { UserStatsCard } from '@/components/dashboard/Cards';
+import { UserDashboardStatsCard } from '@/components/dashboard/Cards';
 import { Separator } from '@/components/ui/separator';
 import CreateForm from '@/components/dashboard-user/CreateForm';
 import { auth } from '@/auth';
@@ -17,7 +17,7 @@ const Page = async () => {
       </h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Suspense fallback={<CardsSkeleton />}>
-          <UserStatsCard />
+          <UserDashboardStatsCard />
         </Suspense>
       </div>
       <Separator className="my-6" />

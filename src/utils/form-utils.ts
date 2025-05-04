@@ -42,4 +42,26 @@ export const formService = {
       },
     });
   },
+  async updateForm(userId: string, formId: string, jsonContent: string) {
+    return await prisma.form.update({
+      where: {
+        userId: userId,
+        id: formId,
+      },
+      data: {
+        content: jsonContent,
+      },
+    });
+  },
+  async publishForm(userId: string, formId: string) {
+    return await prisma.form.update({
+      data: {
+        published: true,
+      },
+      where: {
+        userId: userId,
+        id: formId,
+      },
+    });
+  },
 };

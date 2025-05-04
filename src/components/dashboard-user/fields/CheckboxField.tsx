@@ -1,5 +1,5 @@
 'use client';
-import { WholeWord } from 'lucide-react';
+import { Check } from 'lucide-react';
 import {
   FormElement,
   FormElementInstance,
@@ -8,7 +8,7 @@ import {
 } from '@/components/dashboard-user/FormElement';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { TPropertiesSchema, propertiesSchema } from '@/definitions/schemas';
+import { TPropertiesSchemaCheckbox, propertiesSchemaCheckbox } from '@/definitions/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
@@ -24,15 +24,15 @@ import {
 import { InputField } from '@/components/ui/InputField';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-const type: TElementsType = 'TextField';
+import { Checkbox } from '@/components/ui/checkbox';
+const type: TElementsType = 'CheckboxField';
 const additionalAttributes = {
-  label: 'Text field',
+  label: 'Checkbox field',
   helperText: 'Helper text',
   required: false,
-  placeholder: 'write something...',
 };
 
-export const TextFieldFormElement: FormElement = {
+export const CheckboxFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -40,8 +40,8 @@ export const TextFieldFormElement: FormElement = {
     additionalAttributes,
   }),
   designerBtnElement: {
-    icon: WholeWord,
-    label: 'Text field',
+    icon: Check,
+    label: 'Checkbox field',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -49,7 +49,7 @@ export const TextFieldFormElement: FormElement = {
   validate: (formElement: FormElementInstance, currentValue: string): boolean => {
     const element = formElement as TCustomInstance;
     if (element.additionalAttributes.required) {
-      return currentValue.length > 0;
+      return currentValue === 'true';
     }
     return true;
   },
@@ -60,15 +60,18 @@ type TCustomInstance = FormElementInstance & {
 };
 function DesignerComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as TCustomInstance;
-  const { label, required, placeholder, helperText } = element.additionalAttributes;
+  const { label, required, helperText } = element.additionalAttributes;
+  const id = `checkbox-${element.id}`;
   return (
-    <div className="flex w-full flex-col gap-2">
-      <Label className="text-muted-foreground font-normal">
-        {label}
-        {required && '*'}
-      </Label>
-      <Input readOnly placeholder={placeholder} />
-      {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
+    <div className="items-top flex space-x-2">
+      <Checkbox id={id}></Checkbox>
+      <div className="grid gap-1.5 leading-none">
+        <Label htmlFor={id}>
+          {label}
+          {required && '*'}
+        </Label>
+        {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
+      </div>
     </div>
   );
 }
@@ -84,37 +87,42 @@ function FormComponent({
   isInvalid?: boolean;
   defaultValue?: string;
 }) {
-  const [value, setValue] = useState(defaultValue || '');
+  const [value, setValue] = useState<boolean>(defaultValue === 'true' ? true : false);
   const [error, setError] = useState(false);
   useEffect(() => {
     setError(isInvalid === true);
   }, [isInvalid]);
   const element = elementInstance as TCustomInstance;
   const { label, required, placeholder, helperText } = element.additionalAttributes;
+  const id = `checkbox-${element.id}`;
   return (
-    <div className="flex w-full flex-col gap-2">
-      <Label className={cn(error && 'text-destructive')}>
-        {label}
-        {required && '*'}
-      </Label>
-      <Input
+    <div className="items-top flex space-x-2">
+      <Checkbox
+        id={id}
+        checked={value}
         className={cn(error && 'border-destructive')}
-        placeholder={placeholder}
-        onChange={e => setValue(e.target.value)}
-        onBlur={e => {
+        onCheckedChange={checked => {
+          let value = false;
+          if (checked === true) value = true;
+          setValue(value);
           if (!submitValue) return;
-          const valid = TextFieldFormElement.validate(element, e.target.value);
+          const stringValue = value ? 'true' : 'false';
+          const valid = CheckboxFormElement.validate(element, stringValue);
           setError(!valid);
-          if (!valid) return;
-          submitValue(element.id, e.target.value);
+          submitValue(element.id, stringValue);
         }}
-        value={value}
-      />
-      {helperText && (
-        <p className={cn('text-muted-foreground text-[0.8rem]', error && 'text-destructive')}>
-          {helperText}
-        </p>
-      )}
+      ></Checkbox>
+      <div className="grid gap-1.5 leading-none">
+        <Label htmlFor={id} className={cn(error && 'border-destructive')}>
+          {label}
+          {required && '*'}
+        </Label>
+        {helperText && (
+          <p className={cn('text-muted-foreground text-[0.8rem]', error && 'text-destructive')}>
+            {helperText}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -126,19 +134,18 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     label: element.additionalAttributes.label,
     helperText: element.additionalAttributes.helperText,
     required: element.additionalAttributes.required,
-    placeholder: element.additionalAttributes.placeholder,
   };
 
-  const form = useForm<TPropertiesSchema>({
-    resolver: zodResolver(propertiesSchema),
+  const form = useForm<TPropertiesSchemaCheckbox>({
+    resolver: zodResolver(propertiesSchemaCheckbox),
     mode: 'onBlur',
     defaultValues,
   });
   useEffect(() => {
     form.reset(element.additionalAttributes);
   }, [element, form]);
-  function applyChanges(values: TPropertiesSchema) {
-    const { label, helperText, required, placeholder } = values;
+  function applyChanges(values: TPropertiesSchemaCheckbox) {
+    const { label, helperText, required } = values;
 
     updateElement(element.id, {
       ...element,
@@ -146,7 +153,6 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
         label,
         helperText,
         required,
-        placeholder,
       },
     });
   }
@@ -161,13 +167,6 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           control={form.control}
           name="label"
           label="Label"
-          placeholder="write something..."
-          type="text"
-        />
-        <InputField
-          control={form.control}
-          name="placeholder"
-          label="Placeholder"
           placeholder="write something..."
           type="text"
         />

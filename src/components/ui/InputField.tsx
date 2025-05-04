@@ -31,6 +31,9 @@ export const InputField: React.FC<IInputProps> = ({
                 placeholder={placeholder}
                 className="pr-8"
                 autoComplete={id}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') e.currentTarget.blur();
+                }}
               />
               {icon}
             </div>
@@ -53,7 +56,7 @@ export const TextAreaField: React.FC<IInputProps> = ({ id, control, placeholder,
             {label}
           </FormLabel>
           <FormControl>
-            <Textarea id={id} {...field} placeholder={placeholder} />
+            <Textarea rows={5} id={id} {...field} placeholder={placeholder} />
           </FormControl>
           <FormMessage />
         </FormItem>

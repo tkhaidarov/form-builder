@@ -1,5 +1,5 @@
 'use client';
-import { WholeWord } from 'lucide-react';
+import { Binary } from 'lucide-react';
 import {
   FormElement,
   FormElementInstance,
@@ -24,15 +24,15 @@ import {
 import { InputField } from '@/components/ui/InputField';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-const type: TElementsType = 'TextField';
+const type: TElementsType = 'NumberField';
 const additionalAttributes = {
-  label: 'Text field',
+  label: 'Number field',
   helperText: 'Helper text',
   required: false,
-  placeholder: 'write something...',
+  placeholder: '0',
 };
 
-export const TextFieldFormElement: FormElement = {
+export const NumberFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -40,8 +40,8 @@ export const TextFieldFormElement: FormElement = {
     additionalAttributes,
   }),
   designerBtnElement: {
-    icon: WholeWord,
-    label: 'Text field',
+    icon: Binary,
+    label: 'Number field',
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -67,7 +67,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
         {label}
         {required && '*'}
       </Label>
-      <Input readOnly placeholder={placeholder} />
+      <Input type="number" readOnly placeholder={placeholder} />
       {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
     </div>
   );
@@ -98,12 +98,13 @@ function FormComponent({
         {required && '*'}
       </Label>
       <Input
+        type="number"
         className={cn(error && 'border-destructive')}
         placeholder={placeholder}
         onChange={e => setValue(e.target.value)}
         onBlur={e => {
           if (!submitValue) return;
-          const valid = TextFieldFormElement.validate(element, e.target.value);
+          const valid = NumberFieldFormElement.validate(element, e.target.value);
           setError(!valid);
           if (!valid) return;
           submitValue(element.id, e.target.value);

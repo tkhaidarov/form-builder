@@ -1,10 +1,14 @@
 'use client';
 
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import useUserAction from '@/hooks/useUserAction';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Lock, Unlock, Trash2, UserCog, User } from 'lucide-react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { IAuthButtonProps } from '@/definitions/definitions';
+import { TToolButton } from '@/definitions/definitions';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 export default function Tools() {
   return (
@@ -46,24 +50,33 @@ export function Search({ placeholder }: { placeholder: string }) {
   );
 }
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-
 export function ToolButtons() {
+  const { selectedUsersIds, isProcessing, blockUser } = useUserAction();
+
   return (
     <>
-      <ToolButton icon={<Unlock />} title="Unblock" />
-      <ToolButton icon={<Lock />} title="Block" />
-      <ToolButton icon={<UserCog />} title="Add to admin" />
-      <ToolButton icon={<User />} title="Remove from admin" />
-      <ToolButton icon={<Trash2 />} title="Delete" />
+      <ToolButton
+        onClickAction={blockUser}
+        disabled={isProcessing || selectedUsersIds.length === 0}
+        icon={<Unlock />}
+        title="Unblock"
+      />
+      {/*<ToolButton icon={<Lock />} title="Block" />*/}
+      {/*<ToolButton icon={<UserCog />} title="Add to admin" />*/}
+      {/*<ToolButton icon={<User />} title="Remove from admin" />*/}
+      {/*<ToolButton icon={<Trash2 />} title="Delete" />*/}
     </>
   );
 }
 
-export function ToolButton({ title, icon }: Pick<IAuthButtonProps, 'icon' | 'title'>) {
+export function ToolButton({ title, icon, onClickAction, disabled }: TToolButton) {
   return (
-    <Button variant="outline" className="cursor-pointer border-dashed">
+    <Button
+      onClick={onClickAction}
+      disabled={disabled}
+      variant="outline"
+      className="cursor-pointer border-dashed"
+    >
       {icon}
       {title}
     </Button>

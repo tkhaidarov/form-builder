@@ -51,19 +51,19 @@ export const columns: ColumnDef<TUsers>[] = [
     },
   },
   {
-    accessorKey: 'position',
-    header: 'Position',
+    accessorKey: 'role',
+    header: 'Role',
   },
   {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ getValue }) => {
-      const status = getValue<string>();
+      const status = getValue<boolean>();
       return <UserStatus status={status} />;
     },
   },
   {
-    accessorKey: 'lastSeen',
+    accessorKey: 'created_at',
     header: 'Last Seen',
     cell: ({ getValue }) => {
       const date = getValue<Date>();

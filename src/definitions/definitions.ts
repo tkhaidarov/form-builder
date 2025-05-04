@@ -21,10 +21,15 @@ export interface IAuthButtonProps {
   variant: 'link' | 'outline' | 'default' | 'destructive' | 'secondary' | 'ghost' | null;
   title?: string;
 }
-
+export type TToolButton = {
+  icon?: React.ReactNode;
+  onClickAction: () => void;
+  disabled: boolean;
+  title: string;
+};
 export interface ICardProps {
   title: string;
-  value: number;
+  value: number | string;
   type:
     | 'users'
     | 'blockedUsers'

@@ -1,6 +1,7 @@
 import { iconMap } from '@/definitions/constants';
 import { ICardProps } from '@/definitions/definitions';
 import { Card, CardContent } from '@/components/ui/card';
+import { getFormStats } from '@/actions/actions';
 // fetchCardData() нужно создать
 export /*async*/ function CardWrapper() {
   // const {
@@ -20,13 +21,14 @@ export /*async*/ function CardWrapper() {
   );
 }
 
-export function UserStatsCard() {
+export async function UserDashboardStatsCard() {
+  const { visits, submissions, submissionsRate, bounceRate } = await getFormStats();
   return (
     <>
-      <StatCard title="Total visits" value={28} type="view" />
-      <StatCard title="Total submissions" value={11} type="calculator" />
-      <StatCard title="Submission rate" value={19} type="mousePointer" />
-      <StatCard title="Bounce rate" value={94} type="star" />
+      <StatCard title="Total visits" value={visits.toLocaleString() || ''} type="view" />
+      <StatCard title="Total submissions" value={submissions} type="calculator" />
+      <StatCard title="Submission rate" value={`${submissionsRate} %`} type="mousePointer" />
+      <StatCard title="Bounce rate" value={`${bounceRate} %`} type="star" />
     </>
   );
 }

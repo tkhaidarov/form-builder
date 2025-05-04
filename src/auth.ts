@@ -35,7 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!existingUser || !existingUser.password) {
           return null;
         }
-        const passwordMatch = compare(validatedCredentials.password, existingUser.password);
+        const passwordMatch = await compare(validatedCredentials.password, existingUser.password);
         if (!passwordMatch) {
           return null;
         }

@@ -6,6 +6,8 @@ import { Providers } from '@/components/Providers';
 import { Toaster } from 'sonner';
 import React from 'react';
 import DesignerContextProvider from '@/context/DesignerContext';
+import NextTopLoader from 'nextjs-toploader';
+import UserContextProvider from '@/context/UserContext';
 
 export const metadata: Metadata = {
   title: 'Create custom forms',
@@ -20,18 +22,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full w-full`} suppressHydrationWarning>
       <body className="h-full w-full">
+        <NextTopLoader />
         <DesignerContextProvider>
-          <Providers>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </Providers>
+          <UserContextProvider>
+            <Providers>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </Providers>
+          </UserContextProvider>
         </DesignerContextProvider>
       </body>
     </html>

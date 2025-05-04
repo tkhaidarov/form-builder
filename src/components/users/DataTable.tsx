@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   buildHeaderGroups,
   ColumnDef,
@@ -10,7 +10,7 @@ import {
   SortingState,
   getSortedRowModel,
 } from '@tanstack/react-table';
-
+import { columns } from '@/components/users/Columns';
 import {
   Table,
   TableBody,
@@ -20,18 +20,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import useUserAction from '@/hooks/useUserAction';
+import { getUsers } from '@/actions/user';
+import { Loader2 } from 'lucide-react';
 
-interface IDataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
-export function DataTable<TData, TValue>({ columns, data }: IDataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ idKey = 'id' }: { idKey?: string }) {
+  const [data, setData] = useState<TData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const { setSelectedUsersIds, shouldRefresh } = useUserAction();
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns as ColumnDef<TData, TValue>[],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -48,10 +50,49 @@ export function DataTable<TData, TValue>({ columns, data }: IDataTableProps<TDat
       rowSelection,
     },
   });
+
+  useEffect(() => {
+    const selectedId = table.getSelectedRowModel().rows.map(row => (row.original as any)[idKey]);
+    setSelectedUsersIds(selectedId);
+    console.log(selectedId);
+  }, [rowSelection, table, setSelectedUsersIds, idKey]);
+
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const users = await getUsers();
+      if (users) {
+        setData(users as TData[]);
+        table.resetRowSelection();
+      } else {
+        console.error('No users found');
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      fetchUsers();
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="md: rounded-lg bg-gray-50 p-2 pt-0">
+          {isLoading && (
+            <div className="flex justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+            </div>
+          )}
           <Table className="hidden min-w-full md:table">
             <TableHeader className="rounded-lg text-left text-sm font-normal">
               {table.getHeaderGroups().map(headerGroup => (
@@ -86,7 +127,7 @@ export function DataTable<TData, TValue>({ columns, data }: IDataTableProps<TDat
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No results
+                    {isLoading ? 'Loading data...' : 'No results'}
                   </TableCell>
                 </TableRow>
               )}

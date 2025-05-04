@@ -16,9 +16,9 @@ const SidebarBtnElement = ({ formElement }: { formElement: FormElement }) => {
   return (
     <Button
       ref={draggable.setNodeRef}
-      variant="secondary"
+      variant="ghost"
       className={cn(
-        "border-primary/30 flex h-12 cursor-grab justify-start gap-3 border border-dashed text-lg [&_svg:not([class*='size-'])]:size-6",
+        "border-primary/30 flex h-10 w-full cursor-grab justify-start gap-3 border border-dashed text-[16px] [&_svg:not([class*='size-'])]:size-5",
         draggable.isDragging && 'border-primary border-dashed',
       )}
       {...draggable.listeners}
@@ -44,7 +44,7 @@ export const SidebarBtnElementDragOverlay = ({ formElement }: { formElement: For
   return (
     <Button
       variant="secondary"
-      className="border-primary/30 flex h-12 cursor-grab justify-start gap-3 border border-dashed text-lg [&_svg:not([class*='size-'])]:size-6"
+      className="border-primary/30 flex h-10 w-52 cursor-grab justify-start gap-3 border border-dashed text-[16px] [&_svg:not([class*='size-'])]:size-5"
     >
       <Icon className="cursor-grab" />
       <span className="">{label}</span>
