@@ -1,6 +1,5 @@
 import React from 'react';
 import { getFormById, getFormWithSubmissions } from '@/actions/actions';
-import FormBuilder from '@/components/dashboard-user/FormBuilder';
 import VisitBtn from '@/components/forms/VisitBtn';
 import FormLinkShare from '@/components/forms/FormLinkShare';
 import { StatCard } from '@/components/dashboard/Cards';
@@ -16,7 +15,7 @@ import {
 import { formatDistance } from 'date-fns';
 
 const Page = async ({ params }: { params: { id: string } }) => {
-  const { id } = await Promise.resolve(params);
+  const { id } = params;
   const form = await getFormById(id);
   if (!form) {
     throw new Error('Form not found');
