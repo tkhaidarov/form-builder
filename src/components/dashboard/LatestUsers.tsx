@@ -30,7 +30,7 @@ export default /*async*/ function LatestUsers() {
                       <p className="hidden text-sm text-gray-500 sm:block">{user.email}</p>
                     </div>
                   </div>
-                  <p className="truncate text-sm font-medium md:text-base">{user.lastSeen}</p>
+                  <p className="truncate text-sm font-medium md:text-base">{user.created_at}</p>
                 </div>
               );
             })}

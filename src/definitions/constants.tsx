@@ -51,100 +51,17 @@ export const iconMap = {
   calculator: ClipboardList,
 };
 
-export const latestUsers: TLatestUsers[] = [
+export const latestUsers = [
   {
     id: '1',
     name: 'Jackie',
     email: 'jackie@mail.com',
-    lastSeen: '5 minute ago',
+    created_at: '5 minute ago',
   },
   {
     id: '2',
     name: 'Polli',
     email: 'Polli@mail.com',
-    lastSeen: '5 minute ago',
-  },
-];
-
-export const users: TUsers[] = [
-  {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'Алексей Петров',
-    email: 'alex.petrov@example.com',
-    lastSeen: '2025-04-22T09:30:15Z',
-    status: 'blocked',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174001',
-    name: 'Мария Иванова',
-    email: 'maria.i@example.com',
-    lastSeen: '2025-04-21T16:45:22Z',
-    status: 'blocked',
-    position: 'admin',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174002',
-    name: 'Дмитрий Соколов',
-    email: 'd.sokolov@example.com',
-    lastSeen: '2025-04-22T11:15:00Z',
-    status: 'active',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174003',
-    name: 'Елена Смирнова',
-    email: 'e.smirnova@example.com',
-    lastSeen: '2025-04-20T18:22:10Z',
-    status: 'active',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174004',
-    name: 'Игорь Козлов',
-    email: 'i.kozlov@example.com',
-    lastSeen: '2025-04-22T08:05:33Z',
-    status: 'blocked',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'Алексей Петров',
-    email: 'alex.petrov@example.com',
-    lastSeen: '2025-04-22T09:30:15Z',
-    status: 'blocked',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174001',
-    name: 'Мария Иванова',
-    email: 'maria.i@example.com',
-    lastSeen: '2025-04-21T16:45:22Z',
-    status: 'blocked',
-    position: 'admin',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174002',
-    name: 'Дмитрий Соколов',
-    email: 'd.sokolov@example.com',
-    lastSeen: '2025-04-22T11:15:00Z',
-    status: 'active',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174003',
-    name: 'Елена Смирнова',
-    email: 'e.smirnova@example.com',
-    lastSeen: '2025-04-20T18:22:10Z',
-    status: 'active',
-    position: 'user',
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174004',
-    name: 'Игорь Козлов',
-    email: 'i.kozlov@example.com',
-    lastSeen: '2025-04-22T08:05:33Z',
-    status: 'blocked',
-    position: 'user',
+    created_at: '5 minute ago',
   },
 ];
