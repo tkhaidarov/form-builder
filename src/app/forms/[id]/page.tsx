@@ -14,7 +14,11 @@ import {
 } from '@/components/ui/table';
 import { formatDistance } from 'date-fns';
 
-const Page = async ({ params }: { params: { id: string } }) => {
+type Props = {
+  params: { id: string };
+};
+
+const Page = async ({ params }: Props) => {
   const { id } = params;
   const form = await getFormById(id);
   if (!form) {
