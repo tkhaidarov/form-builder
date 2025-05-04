@@ -1,9 +1,11 @@
 import React from 'react';
 import { getFormById } from '@/actions/actions';
 import FormBuilder from '@/components/dashboard-user/FormBuilder';
-
-const Page = async ({ params }: { params: { id: string } }) => {
-  const { id } = params;
+type Props = {
+  params: Promise<{ id: string }>;
+};
+const Page = async ({ params }: Props) => {
+  const { id } = await params;
   const form = await getFormById(id);
   if (!form) {
     throw new Error('Form not found');

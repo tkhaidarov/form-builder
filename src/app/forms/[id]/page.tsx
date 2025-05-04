@@ -15,11 +15,11 @@ import {
 import { formatDistance } from 'date-fns';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 const Page = async ({ params }: Props) => {
-  const { id } = params;
+  const { id } = await params;
   const form = await getFormById(id);
   if (!form) {
     throw new Error('Form not found');
